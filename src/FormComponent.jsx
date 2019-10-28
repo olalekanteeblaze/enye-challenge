@@ -3,10 +3,12 @@ import TextField from '@material-ui/core/TextField';
 import FormGroup from '@material-ui/core/FormGroup';
 import Button from '@material-ui/core/Button';
 import DateFnsUtils from '@date-io/date-fns';
+import firebase from 'firebase';
 import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker
 } from '@material-ui/pickers';
+import db from './firestore';
 import './formComponent.css'
 
 class FormComponent extends Component{
@@ -30,7 +32,6 @@ class FormComponent extends Component{
         this.setState({
             firstname: e.target.value
         })
-        console.log(this.state)
     }
     handleLastNameChange = (e) => {
         this.setState({
@@ -54,6 +55,19 @@ class FormComponent extends Component{
     }
     onFormSubmit = (e) => {
         e.preventDefault()   
+        db.collection('users').add({
+            "First Name": this.state.firstname,
+            "Last Name": this.state.lastname,
+            "Birthday": firebase.firestore.Timestamp.fromDate(this.state.birthday),
+            "Age": this.state.age,
+            "Hobby": this.state.hobby
+        })
+        .then(docRef => {
+            console.log(docRef)
+        })
+        .catch( err => {
+            console.log('Error adding document', err)
+        })
         this.setState({
             firstname: "",
             lastname: "",
